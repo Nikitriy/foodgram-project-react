@@ -47,3 +47,8 @@ class RecipeIngredient(models.Model):
 
     def __str__(self) -> str:
         return f'{self.recipe} - {self.ingredient}'
+
+
+class RecipeTag(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='рецепт')
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, verbose_name='тег')
