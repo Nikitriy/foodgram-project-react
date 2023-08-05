@@ -16,9 +16,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "recipes.apps.RecipesConfig",
     "rest_framework",
+    "rest_framework.authtoken",
     "djoser",
+    "recipes.apps.RecipesConfig",
 ]
 
 MIDDLEWARE = [
@@ -91,7 +92,13 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIrenderer',
     ],
 
-    'DEFAULT_AUTHENTICATION_CLASES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 6,
+}
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
 }

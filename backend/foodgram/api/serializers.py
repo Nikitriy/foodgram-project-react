@@ -3,7 +3,7 @@ from rest_framework import serializers
 from recipes.models import *
 
 class RecipeSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field='name')
+    author = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
     class Meta:
         model = Recipe
