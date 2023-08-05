@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "recipes.apps.RecipesConfig",
+    "rest_framework",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -82,3 +84,14 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDER_CLASSES': [
+        'rest_framework.renderers.JSONrenderer',
+        'rest_framework.renderers.BrowsableAPIrenderer',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}

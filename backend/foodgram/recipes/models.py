@@ -13,6 +13,9 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField('Ingredient', through='RecipeIngredient', verbose_name='ингредиенты')
     tags = models.ManyToManyField('Tag', through='RecipeTag', verbose_name='теги')
 
+    class Meta:
+        ordering = ['-pk',]
+
     def __str__(self) -> str:
         return self.name
 
@@ -24,9 +27,6 @@ class Ingredient(models.Model):
 
     def __str__(self) -> str:
         return self.name
-    
-    def get_absolute_url(self):
-        return reverse('ingredient', kwargs={'pk': self.pk})
 
 
 class Tag(models.Model):
