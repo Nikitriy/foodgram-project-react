@@ -11,10 +11,10 @@ router.register('tags', TagViewset)
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api", include(router.urls)),
-    path('api/', include('djoser.urls')),
-    path('api/', include('djoser.urls.jwt')),
+    path('admin/', admin.site.urls),
+    path('api', include(router.urls)),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
     path(
         'redoc/',
         TemplateView.as_view(template_name='redoc.html'),
