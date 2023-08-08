@@ -1,13 +1,17 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-yraq3xck54ma8gtwvzy)xf^7699#yi@x#^m3g&uhb4ql0wcgiq"
+SECRET_KEY = os.getenv('SECRET_KEY', 'DEFAULT_SECRET_KEY')
 
-DEBUG = True
+DEBUG = str(os.getenv('DEBUG')) == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = str(os.getenv('ALLOWED_HOSTS')).split()
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -20,6 +24,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "djoser",
     "recipes.apps.RecipesConfig",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -90,6 +95,10 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDER_CLASSES': [
         'rest_framework.renderers.JSONrenderer',
         'rest_framework.renderers.BrowsableAPIrenderer',
+    ],
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [

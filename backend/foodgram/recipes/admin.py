@@ -1,6 +1,16 @@
 from django.contrib import admin
 
-from recipes.models import Ingredient, Recipe
+from recipes.models import *
 
-admin.site.register(Recipe)
+
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
+
+
 admin.site.register(Ingredient)
+admin.site.register(Tag)
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    inlines = (RecipeIngredientInline,)
