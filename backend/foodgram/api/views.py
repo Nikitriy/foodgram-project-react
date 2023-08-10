@@ -6,10 +6,9 @@ from api.serializers import *
 
 class RecipeViewset(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
 
     def get_queryset(self):
-        return Recipe.objects.prefetch_related('recipe_ingredients__ingredient', 'tags').all()
+        return Recipe.objects.prefetch_related('recipe_ingredient__ingredient', 'tags').all()
     
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -18,7 +17,7 @@ class RecipeViewset(viewsets.ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         if self.action == 'create':
             return RecipeCreateSerializer
-        return super().get_serializer(*args, **kwargs)
+        return RecipeSerializer
 
 
 class IngredientViewset(viewsets.ReadOnlyModelViewSet):

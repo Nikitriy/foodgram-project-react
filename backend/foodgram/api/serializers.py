@@ -26,9 +26,9 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    author = serializers.SlugRelatedField(slug_field='username', read_only=True)
     tags = TagSerializer(many=True)
-    ingredients = RecipeIngredientSerializer(many=True, source='recipe_ingredients')
+    ingredients = RecipeIngredientSerializer(many=True, source='recipe_ingredient')
 
     class Meta:
         model = Recipe
@@ -63,3 +63,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ))
         RecipeIngredient.objects.bulk_create(recipes)
         return super().create(validated_data)
+
+
+class RecipeSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')

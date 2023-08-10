@@ -4,7 +4,7 @@ from django.db import models
 from users.models import CustomUser
 
 class Recipe(models.Model):
-    author = models.ForeignKey(CustomUser, related_name='recipes', on_delete=models.CASCADE, verbose_name='автор')
+    author = models.ForeignKey(CustomUser, related_name='all_recipes', on_delete=models.CASCADE, verbose_name='автор')
     name = models.CharField(max_length=200, verbose_name='название')
     image = models.ImageField(verbose_name='картинка')
     text = models.TextField(verbose_name='описание')
