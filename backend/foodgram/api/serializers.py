@@ -37,14 +37,14 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'author', 'name', 'image', 'text', 'cooking_time', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart')
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
         read_only_fields = ('id', 'author', 'is_favorited', 'is_in_shopping_cart')
 
     def get_is_favorited(self, obj):
-        return Favorite.objects.filter(user=self.context.get('user'), recipe=obj).exists()
+        return Favorite.objects.filter(user=self.context.get('request').user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        return ShoppingCart.objects.filter(user=self.context.get('user'), recipe=obj).exists()
+        return ShoppingCart.objects.filter(user=self.context.get('request').user, recipe=obj).exists()
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
@@ -56,12 +56,15 @@ class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
+    author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = RecipeIngredientCreateSerializer(many=True)
+    is_favorited = serializers.ReadOnlyField(default=False)
+    is_in_shopping_cart = serializers.ReadOnlyField(default=False)
 
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'image', 'text', 'cooking_time', 'ingredients', 'tags')
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
     
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
