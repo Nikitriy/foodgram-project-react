@@ -5,7 +5,7 @@ from rest_framework import decorators, status, viewsets
 from rest_framework.response import Response
 
 from users.models import CustomUser, Subscription
-from users.serializers import *
+from users.serializers import CustomUserSerializer, CustomUserCreateSerializer, SubscriptionSerializer
 
 class CustomUserViewSet(UserViewSet):
     queryset = CustomUser.objects.all()

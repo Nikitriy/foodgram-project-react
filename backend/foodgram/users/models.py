@@ -9,20 +9,25 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=150, verbose_name='фамилия')
     password = models.CharField(max_length=150, verbose_name='пароль')
 
+    class Meta:
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
+
     def __str__(self) -> str:
         return self.username
 
 
 class Subscription(models.Model):
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='subscribers', verbose_name='автор',
+        CustomUser, on_delete=models.CASCADE, related_query_name='subscribers', verbose_name='автор',
     )
     subscriber = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='subscribed_author', verbose_name='подписчик',
     )
-    is_subscribed = models.BooleanField(default=True, verbose_name='подписка')
 
     class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'
         constraints = [
             models.UniqueConstraint(
                 fields=('author', 'subscriber'), name='unique_author_subscriber',

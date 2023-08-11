@@ -10,6 +10,8 @@ class RecipeIngredientInline(admin.TabularInline):
 
 admin.site.register(Ingredient)
 admin.site.register(Tag)
+admin.site.register(Favorite)
+admin.site.register(ShoppingCart)
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
