@@ -16,21 +16,21 @@ class CustomUserViewSet(UserViewSet):
             return CustomUserCreateSerializer
         return CustomUserSerializer
     
-    @decorators.action(detail=True, methods=['post', 'delete'], serializer_class=SubscriptionSerializer)
+    @decorators.action(detail=True, methods=['post', 'delete'])
     def subscribe(self, request, id):
         if request.method == 'POST':
-            if Subscription.objects.filter(author=CustomUser.objects.get(pk=id), subscriber=request.user).exists():
+            if Subscription.objects.filter(author=CustomUser.objects.get(id=id), subscriber=request.user).exists():
                 return Response({"error": "Вы уже подписаны на данного автора"}, status=status.HTTP_400_BAD_REQUEST)
-            if CustomUser.objects.get(pk=id)==request.user:
-                return Response({"error": "Нельзя подписываться на себя"}, status=status.HTTP_400_BAD_REQUEST)
-            Subscription.objects.create(author=CustomUser.objects.get(pk=id), subscriber=request.user)
-            serializer = self.get_serializer_class()(CustomUser.objects.get(pk=id), data=request.data)
-            serializer.is_valid()
+#            if CustomUser.objects.get(id=id)==request.user:
+#                return Response({"error": "Нельзя подписываться на себя"}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = SubscriptionSerializer(CustomUser.objects.get(id=id))
+            Subscription.objects.create(author=CustomUser.objects.get(id=id), subscriber=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if not Subscription.objects.filter(author=CustomUser.objects.get(pk=id), subscriber=request.user).exists():
-            return Response({"error": "Вы итак не подписаны на данного автора"}, status=status.HTTP_400_BAD_REQUEST)
-        Subscription.objects.delete(author=CustomUser.objects.get(pk=id), subscriber=request.user)
-        return Response(status=status.HTTP_204_NO_CONTENT)   
+        if request.method == 'DELETE':
+            if not Subscription.objects.filter(author=CustomUser.objects.get(id=id), subscriber=request.user).exists():
+                return Response({"error": "Вы итак не подписаны на данного автора"}, status=status.HTTP_400_BAD_REQUEST)
+            Subscription.objects.delete(author=CustomUser.objects.get(id=id), subscriber=request.user)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):

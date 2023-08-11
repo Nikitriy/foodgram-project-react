@@ -62,6 +62,9 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'избранное'
         verbose_name_plural = 'избранное'
+    
+    def __str__(self):
+        return f'{self.user} - {self.recipe}'
 
 
 class ShoppingCart(models.Model):
@@ -71,3 +74,6 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = 'список покупок'
         verbose_name_plural = 'списки покупок'
+    
+    def __str__(self):
+        return f'{self.user} - {self.recipe}'
