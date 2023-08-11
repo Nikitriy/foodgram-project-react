@@ -21,15 +21,15 @@ class CustomUserViewSet(UserViewSet):
         if request.method == 'POST':
             if Subscription.objects.filter(author=CustomUser.objects.get(id=id), subscriber=request.user).exists():
                 return Response({"error": "Вы уже подписаны на данного автора"}, status=status.HTTP_400_BAD_REQUEST)
-#            if CustomUser.objects.get(id=id)==request.user:
-#                return Response({"error": "Нельзя подписываться на себя"}, status=status.HTTP_400_BAD_REQUEST)
+            if CustomUser.objects.get(id=id)==request.user:
+                return Response({"error": "Нельзя подписываться на себя"}, status=status.HTTP_400_BAD_REQUEST)
             serializer = SubscriptionSerializer(CustomUser.objects.get(id=id))
             Subscription.objects.create(author=CustomUser.objects.get(id=id), subscriber=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             if not Subscription.objects.filter(author=CustomUser.objects.get(id=id), subscriber=request.user).exists():
                 return Response({"error": "Вы итак не подписаны на данного автора"}, status=status.HTTP_400_BAD_REQUEST)
-            Subscription.objects.delete(author=CustomUser.objects.get(id=id), subscriber=request.user)
+            Subscription.objects.filter(author=CustomUser.objects.get(id=id), subscriber=request.user).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
