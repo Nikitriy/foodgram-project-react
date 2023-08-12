@@ -23,7 +23,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
     
     def get_is_subscribed(self, obj):
-        return Subscription.objects.filter(author=obj, subscriber=self.context.get('request').user).exists()
+        return Subscription.objects.filter(author=obj, subscriber=self.context.get('user')).exists()
 
 
 class RecipeSubscriptionSerializer(serializers.ModelSerializer):

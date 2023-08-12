@@ -10,25 +10,23 @@ services:
     image: postgres:13.10
     volumes:
       - pg_data_foodgram:/var/lib/postgresql/data/
-    env_file: ../.env
+    env_file: .env
   backend:
-    build: ../backend/foodgram/
-    env_file: ../.env
+    image: nikitriy1/foodgram_backend
+    env_file: .env
     depends_on:
       - db
     volumes:
       - static_foodgram:/backend_static/
       - media_foodgram:/app/media/
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: nikitriy1/foodgram_frontend
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static_foodgram:/frontend_static/
-    env_file: ../.env
+    env_file: .env
   nginx:
-    build: ./
+    image: nikitriy1/foodgram_nginx
     ports:
       - 80:80
     volumes:
