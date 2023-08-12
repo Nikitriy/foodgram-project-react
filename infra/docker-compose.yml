@@ -33,4 +33,4 @@ services:
       - 80:80
     volumes:
       - static_foodgram:/static/
-      - media_foodgram:/app/media
+      - media_foodgram:/app/media/
