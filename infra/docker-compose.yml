@@ -30,7 +30,7 @@ services:
   nginx:
     build: ./
     ports:
-      - 80:80
+      - 8000:80
     volumes:
       - static_foodgram:/static/
       - media_foodgram:/app/media/
