@@ -10,10 +10,10 @@ services:
     image: postgres:13.10
     volumes:
       - pg_data_foodgram:/var/lib/postgresql/data/
-    env_file: ../.env
+    env_file: .env
   backend:
     build: ../backend/foodgram/
-    env_file: ../.env
+    env_file: .env
     depends_on:
       - db
     volumes:
@@ -26,7 +26,7 @@ services:
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static_foodgram:/frontend_static/
-    env_file: ../.env
+    env_file: .env
   nginx:
     build: ./
     ports:
