@@ -3,17 +3,32 @@ from django.db import models
 
 from users.models import CustomUser
 
+
 class Recipe(models.Model):
-    author = models.ForeignKey(CustomUser, related_name='all_recipes', on_delete=models.CASCADE, verbose_name='автор')
+    author = models.ForeignKey(
+        CustomUser,
+        related_name='all_recipes',
+        on_delete=models.CASCADE,
+        verbose_name='автор',
+    )
     name = models.CharField(max_length=200, verbose_name='название')
     image = models.ImageField(verbose_name='картинка')
     text = models.TextField(verbose_name='описание')
-    cooking_time = models.PositiveIntegerField(validators=[MinValueValidator(1),], verbose_name='время приготовления')
-    ingredients = models.ManyToManyField('Ingredient', through='RecipeIngredient', verbose_name='ингредиенты')
+    cooking_time = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1),
+        ],
+        verbose_name='время приготовления',
+    )
+    ingredients = models.ManyToManyField(
+        'Ingredient', through='RecipeIngredient', verbose_name='ингредиенты'
+    )
     tags = models.ManyToManyField('Tag', verbose_name='теги')
 
     class Meta:
-        ordering = ['-pk',]
+        ordering = [
+            '-pk',
+        ]
         verbose_name = 'рецепт'
         verbose_name_plural = 'рецепты'
 
@@ -23,7 +38,9 @@ class Recipe(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=200, verbose_name='название')
-    measurement_unit = models.CharField(max_length=200, verbose_name='единица измерения')
+    measurement_unit = models.CharField(
+        max_length=200, verbose_name='единица измерения'
+    )
 
     class Meta:
         verbose_name = 'ингредиент'
@@ -47,8 +64,18 @@ class Tag(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_ingredient', verbose_name='рецепт')
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='recipe_ingredients', verbose_name='ингредиент')
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredient',
+        verbose_name='рецепт',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredients',
+        verbose_name='ингредиент',
+    )
     amount = models.PositiveIntegerField()
 
     def __str__(self) -> str:
@@ -56,24 +83,44 @@ class RecipeIngredient(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='favorites', verbose_name='пользователь')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorite_users', verbose_name='рецепт')
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='пользователь',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorite_users',
+        verbose_name='рецепт',
+    )
 
     class Meta:
         verbose_name = 'избранное'
         verbose_name_plural = 'избранное'
-    
+
     def __str__(self):
         return f'{self.user} - {self.recipe}'
 
 
 class ShoppingCart(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='shopping_cart_recipes', verbose_name='пользователь')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='shopping_cart_users', verbose_name='рецепт')
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart_recipes',
+        verbose_name='пользователь',
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart_users',
+        verbose_name='рецепт',
+    )
 
     class Meta:
         verbose_name = 'список покупок'
         verbose_name_plural = 'списки покупок'
-    
+
     def __str__(self):
         return f'{self.user} - {self.recipe}'

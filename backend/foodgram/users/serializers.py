@@ -1,6 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 
 from recipes.models import Recipe
 from users.models import CustomUser, Subscription
@@ -11,7 +10,14 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'password')
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'password',
+        )
         read_only_fields = ('id',)
 
 
@@ -20,10 +26,19 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
-    
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+        )
+
     def get_is_subscribed(self, obj):
-        return Subscription.objects.filter(author=obj, subscriber=self.context.get('user')).exists()
+        return Subscription.objects.filter(
+            author=obj, subscriber=self.context.get('user')
+        ).exists()
 
 
 class RecipeSubscriptionSerializer(serializers.ModelSerializer):
@@ -41,10 +56,21 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
+        )
 
     def get_is_subscribed(self, obj):
-        return Subscription.objects.filter(author=obj, subscriber=self.context.get('user')).exists()
+        return Subscription.objects.filter(
+            author=obj, subscriber=self.context.get('user')
+        ).exists()
 
     def get_recipes_count(self, obj):
         return obj.all_recipes.count()
