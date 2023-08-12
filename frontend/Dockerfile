@@ -5,11 +5,12 @@ WORKDIR /app
 COPY package.json package.json
 COPY package-lock.json package-lock.json
 
-RUN npm ci --legacy-peer-deps
+RUN npm i --legacy-peer-deps
 
 COPY . .
 
+RUN npm install
 RUN npm run build
 RUN npm install --global http-server
 
-CMD ["npx", "-y", "http-server", "-p", "8080", "/app/build"]
+CMD ["npx", "-y", "http-server", "-p", "8000", "/app/build"]

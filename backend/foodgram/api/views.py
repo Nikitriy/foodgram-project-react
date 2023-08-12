@@ -1,8 +1,10 @@
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import decorators, filters, status, viewsets
 from rest_framework.response import Response
 
-from recipes.models import Favorite, Recipe, Ingredient, Tag, ShoppingCart
+from recipes.models import Favorite, Recipe, RecipeIngredient, Ingredient, Tag, ShoppingCart
 from api.serializers import RecipeSerializer, RecipeCreateSerializer, IngredientSerializer, TagSerializer
 from users.serializers import RecipeSubscriptionSerializer
 
@@ -64,3 +66,14 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+@decorators.api_view(['GET'])
+def shopping_cart(request):
+    ingredients = RecipeIngredient.objects.filter(recipe__shopping_cart_users__user=request.user).values('ingredient__name', 'ingredient__measurement_unit').annotate(amount=Sum('amount'))
+    shopping_list = ''
+    for ingredient in ingredients:
+        shopping_list += f'{ingredient["ingredient__name"]} - {ingredient["amount"]} {ingredient["ingredient__measurement_unit"]}\n'
+    response = HttpResponse(shopping_list, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename={request.user.username}_shopping_list.txt'
+    return response
