@@ -122,4 +122,5 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     amount=ingredient_data['amount'],
                 )
             )
-        return RecipeIngredient.objects.bulk_create(recipes)
+        RecipeIngredient.objects.bulk_create(recipes)
+        return instance
