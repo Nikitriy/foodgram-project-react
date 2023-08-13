@@ -18,17 +18,17 @@ services:
       - db
     volumes:
       - static_foodgram:/backend_static/
-      - media_foodgram:/app/media/
+      - media_foodgram:/media/
   frontend:
     image: nikitriy1/foodgram_frontend
-    command: cp -r /app/build/. /frontend_static/
+    command: 
     volumes:
       - static_foodgram:/frontend_static/
     env_file: .env
   nginx:
     image: nikitriy1/foodgram_nginx
     ports:
-      - 9000:80
+      - 8000:80
     volumes:
       - static_foodgram:/static/
-      - media_foodgram:/app/media/
+      - media_foodgram:/media/

@@ -17,8 +17,8 @@ services:
     depends_on:
       - db
     volumes:
-      - static_foodgram:/backend_static/
-      - media_foodgram:/app/media/
+      - static_foodgram:/backend_static/static/
+      - media_foodgram:/media/
   frontend:
     build:
       context: ../frontend
@@ -30,7 +30,7 @@ services:
   nginx:
     build: ./
     ports:
-      - 9000:80
+      - 8000:80
     volumes:
       - static_foodgram:/static/
-      - media_foodgram:/app/media/
+      - media_foodgram:/media/
