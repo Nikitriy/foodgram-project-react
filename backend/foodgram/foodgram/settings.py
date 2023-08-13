@@ -133,3 +133,5 @@ DJOSER = {
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+CSRF_TRUSTED_ORIGINS = ['https://useful-foodgram.bounceme.net',]
