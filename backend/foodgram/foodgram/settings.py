@@ -77,8 +77,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": (
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
+            "django.contrib.auth.password_validation." "MinimumLengthValidator"
         ),
     },
     {
@@ -134,4 +133,6 @@ DJOSER = {
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-CSRF_TRUSTED_ORIGINS = ['https://useful-foodgram.bounceme.net',]
+CSRF_TRUSTED_ORIGINS = [
+    'https://useful-foodgram.bounceme.net',
+]

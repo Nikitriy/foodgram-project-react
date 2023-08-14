@@ -42,6 +42,6 @@ class Subscription(models.Model):
                 name='unique_author_subscriber',
             ),
         ]
-    
+
     def __str__(self) -> str:
         return f'{self.author} - {self.subscriber}'
