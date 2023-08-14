@@ -74,7 +74,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField(
+        source='ingredient.id', queryset=Ingredient.objects.all()
+    )
 
     class Meta:
         model = RecipeIngredient
