@@ -120,7 +120,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 RecipeIngredient(
                     recipe=instance,
                     ingredient=Ingredient.objects.get(
-                        id=ingredient_data['id']
+                        pk=ingredient_data['id']
                     ),
                     amount=ingredient_data['amount'],
                 )
