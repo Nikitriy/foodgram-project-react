@@ -74,9 +74,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        source='ingredient', queryset=Ingredient.objects.all()
-    )
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
 
     class Meta:
         model = RecipeIngredient
@@ -109,21 +107,36 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
 
+    def recipe_ingredient_create(self, recipe, ingredients):
+        recipes = []
+        for ingredient_data in ingredients:
+            recipes.append(
+                RecipeIngredient(
+                    recipe=recipe,
+                    ingredient=ingredient_data.get('id'),
+                    amount=ingredient_data.get('amount'),
+                )
+            )
+        RecipeIngredient.objects.bulk_create(recipes)
+
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         instance = super().create(validated_data)
         instance.tags.set(tags)
-        recipes = []
-        for ingredient_data in ingredients:
-            recipes.append(
-                RecipeIngredient(
-                    recipe=instance,
-                    ingredient=Ingredient.objects.get(
-                        pk=ingredient_data.get('id')
-                    ),
-                    amount=ingredient_data.get('amount'),
-                )
-            )
-        RecipeIngredient.objects.bulk_create(recipes)
+        self.recipe_ingredient_create(instance, ingredients)
         return instance
+    
+    def update(self, instance, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        RecipeIngredient.objects.filter(recipe=instance).delete()
+        instance.tags.clear()
+        instance.ingredients.clear()
+        instance = super().update(instance, validated_data)
+        instance.tags.set(tags)
+        self.recipe_ingredient_create(instance, ingredients)
+        return instance
+    
+    def to_representation(self, recipe):
+        return RecipeSerializer(recipe).data
