@@ -1,3 +1,4 @@
+from api.permissions import IsAuthorOrIsAuthenticatedOrReadOnly
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              RecipeSerializer, TagSerializer)
 from django.db.models import Sum
@@ -11,6 +12,7 @@ from users.serializers import RecipeSubscriptionSerializer
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = (IsAuthorOrIsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         return Recipe.objects.prefetch_related(
