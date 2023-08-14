@@ -37,3 +37,14 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def favorite(self, obj):
         return obj.favorite_users.count()
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field == 'ingredients':
+            kwargs['queryset'] = Ingredient.objects.filter(
+                recipe_ingredients__recipe=self.get_object()
+            )
+        if db_field == 'tags':
+            kwargs['queryset'] = Tag.objects.filter(
+                recipe_set=self.get_object()
+            )
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
