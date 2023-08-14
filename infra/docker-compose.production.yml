@@ -18,7 +18,7 @@ services:
       - db
     volumes:
       - static_foodgram:/backend_static/
-      - media_foodgram:/media/
+      - media_foodgram:/app/media/
   frontend:
     image: nikitriy1/foodgram_frontend
     command: 
@@ -31,4 +31,4 @@ services:
       - 8000:80
     volumes:
       - static_foodgram:/static/
-      - media_foodgram:/media/
+      - media_foodgram:/app/media/
