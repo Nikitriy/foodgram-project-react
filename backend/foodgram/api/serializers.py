@@ -75,7 +75,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredient.id', queryset=Ingredient.objects.all()
+        source='ingredient', queryset=Ingredient.objects.all()
     )
 
     class Meta:
@@ -111,8 +111,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
-        validated_data.pop('tags')
+        tags = validated_data.pop('tags')
         instance = super().create(validated_data)
+        instance.tags.set(tags)
         recipes = []
         for ingredient_data in ingredients:
             recipes.append(
