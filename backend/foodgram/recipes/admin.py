@@ -26,11 +26,11 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'author',
         'name',
-        'tags',
+        'obtain_tags',
         'image',
         'text',
         'cooking_time',
-        'ingredients',
+        'obtain_ingredients',
         'favorite',
     )
     list_filter = ('author', 'name', 'tags')
@@ -38,13 +38,10 @@ class RecipeAdmin(admin.ModelAdmin):
     def favorite(self, obj):
         return obj.favorite_users.count()
 
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field == 'ingredients':
-            kwargs['queryset'] = Ingredient.objects.filter(
-                recipe_ingredients__recipe=self.get_object()
-            )
-        if db_field == 'tags':
-            kwargs['queryset'] = Tag.objects.filter(
-                recipe_set=self.get_object()
-            )
-        return super().formfield_for_manytomany(db_field, request, **kwargs)
+    def obtain_tags(self, obj):
+        return '\n'.join((tag.name for tag in obj.tags.all()))
+
+    def obtain_ingredients(self, obj):
+        return '\n'.join(
+            (ingredient.name for ingredient in obj.ingredients.all())
+        )
