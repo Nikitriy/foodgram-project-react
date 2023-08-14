@@ -1,7 +1,7 @@
+import users.urls
 from django.urls import include, path
 from rest_framework import routers
 
-import users.urls
 from api.views import (IngredientViewSet, RecipeViewSet, TagViewSet,
                        shopping_cart)
 
