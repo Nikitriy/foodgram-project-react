@@ -1,6 +1,10 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from users.models import CustomUser
+
+MIN_VALUE = 1
+MAX_VALUE = 32000
 
 
 class Recipe(models.Model):
@@ -13,9 +17,10 @@ class Recipe(models.Model):
     name = models.CharField(max_length=200, verbose_name='название')
     image = models.ImageField(verbose_name='картинка')
     text = models.TextField(verbose_name='описание')
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         validators=[
-            MinValueValidator(1),
+            MinValueValidator(MIN_VALUE),
+            MaxValueValidator(MAX_VALUE),
         ],
         verbose_name='время приготовления',
     )
@@ -42,6 +47,9 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        ordering = [
+            '-pk',
+        ]
         verbose_name = 'ингредиент'
         verbose_name_plural = 'ингредиенты'
 
@@ -55,6 +63,9 @@ class Tag(models.Model):
     slug = models.SlugField(max_length=200, unique=True, verbose_name='слаг')
 
     class Meta:
+        ordering = [
+            '-pk',
+        ]
         verbose_name = 'тег'
         verbose_name_plural = 'теги'
 
@@ -75,7 +86,18 @@ class RecipeIngredient(models.Model):
         related_name='recipe_ingredients',
         verbose_name='ингредиент',
     )
-    amount = models.PositiveIntegerField()
+    amount = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(MIN_VALUE),
+            MaxValueValidator(MAX_VALUE),
+        ],
+        verbose_name='количество',
+    )
+
+    class Meta:
+        ordering = [
+            '-pk',
+        ]
 
     def __str__(self) -> str:
         return f'{self.recipe} - {self.ingredient}'
@@ -96,6 +118,9 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        ordering = [
+            '-pk',
+        ]
         verbose_name = 'избранное'
         verbose_name_plural = 'избранное'
 
@@ -118,6 +143,9 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        ordering = [
+            '-pk',
+        ]
         verbose_name = 'список покупок'
         verbose_name_plural = 'списки покупок'
 

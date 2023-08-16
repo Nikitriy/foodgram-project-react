@@ -1,8 +1,11 @@
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
 from rest_framework import serializers
+
+from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from users.serializers import CustomUserSerializer
+
+MIN_VALUE = 1
+MAX_VALUE = 32000
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -63,18 +66,15 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        return Favorite.objects.filter(
-            user=self.context.get('user'), recipe=obj
-        ).exists()
+        return obj.favorite_users.exists()
 
     def get_is_in_shopping_cart(self, obj):
-        return ShoppingCart.objects.filter(
-            user=self.context.get('user'), recipe=obj
-        ).exists()
+        return obj.shopping_cart_users.exists()
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField(min_value=MIN_VALUE, max_value=MAX_VALUE)
 
     class Meta:
         model = RecipeIngredient
@@ -89,6 +89,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.ReadOnlyField(default=False)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all()
+    )
+    cooking_time = serializers.IntegerField(
+        min_value=MIN_VALUE, max_value=MAX_VALUE
     )
 
     class Meta:

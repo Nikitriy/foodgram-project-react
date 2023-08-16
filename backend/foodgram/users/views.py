@@ -1,11 +1,16 @@
 from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import decorators, status, viewsets
 from rest_framework.response import Response
+
 from users.models import CustomUser, Subscription
-from users.serializers import (CustomUserCreateSerializer,
-                               CustomUserSerializer, SetPasswordSerializer,
-                               SubscriptionSerializer)
+from users.serializers import (
+    CustomUserCreateSerializer,
+    CustomUserSerializer,
+    SetPasswordSerializer,
+    SubscriptionSerializer,
+)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -19,28 +24,23 @@ class CustomUserViewSet(UserViewSet):
 
     @decorators.action(detail=True, methods=['post', 'delete'])
     def subscribe(self, request, id):
+        author = get_object_or_404(CustomUser, id=id)
         if request.method == 'POST':
-            if Subscription.objects.filter(
-                author=CustomUser.objects.get(id=id), subscriber=request.user
-            ).exists():
+            if author.subscribers.subscriber == request.user:
                 return Response(
                     {"error": "Вы уже подписаны на данного автора"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            if CustomUser.objects.get(id=id) == request.user:
+            if author == request.user:
                 return Response(
                     {"error": "Нельзя подписываться на себя"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            serializer = SubscriptionSerializer(CustomUser.objects.get(id=id))
-            Subscription.objects.create(
-                author=CustomUser.objects.get(id=id), subscriber=request.user
-            )
+            serializer = SubscriptionSerializer(author)
+            Subscription.objects.create(author=author, subscriber=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            if not Subscription.objects.filter(
-                author=CustomUser.objects.get(id=id), subscriber=request.user
-            ).exists():
+            if not author.subscribers.subscriber == request.user:
                 return Response(
                     {"error": "Вы итак не подписаны на данного автора"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -65,15 +65,12 @@ def set_password(request):
     if request.method == 'POST':
         serializer = SetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(request.user.password)
         if request.user.password != serializer.data.get('current_password'):
             return Response(
                 {'error': 'Неверно введён существующий пароль'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        CustomUser.objects.filter(username=request.user.username).update(
-            password=serializer.data.get('new_password')
-        )
+        request.user.update(password=serializer.data.get('new_password'))
         return Response(
             {'message': 'Пароль успешно изменён'},
             status=status.HTTP_204_NO_CONTENT,

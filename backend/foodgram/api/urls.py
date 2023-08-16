@@ -1,8 +1,13 @@
-import users.urls
-from api.views import (IngredientViewSet, RecipeViewSet, TagViewSet,
-                       shopping_cart)
 from django.urls import include, path
 from rest_framework import routers
+
+import users.urls
+from api.views import (
+    IngredientViewSet,
+    RecipeViewSet,
+    TagViewSet,
+    shopping_cart,
+)
 
 router = routers.SimpleRouter()
 router.register('recipes', RecipeViewSet)
