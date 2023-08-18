@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
 from rest_framework import serializers
@@ -18,6 +19,10 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
             'password',
         )
         read_only_fields = ('id',)
+    
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return CustomUser.objects.create(validated_data)
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

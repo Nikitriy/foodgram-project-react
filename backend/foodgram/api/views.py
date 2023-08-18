@@ -1,5 +1,6 @@
 from django.db.models import Sum
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import decorators, filters, status, viewsets
 from rest_framework.response import Response
 
@@ -38,42 +39,42 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeCreateSerializer
         return RecipeSerializer
 
-    def recipe_exists(self, pk):
-        if not Recipe.objects.filter(pk=pk).exists():
+    def recipe_exists(self):
+        if not Recipe.objects.first().exists():
             return Response(
-                {'error': 'Нет рецепта с таким id'},
+                {'error': 'Список рецептов пуст'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     def post_method(self, request, model, validation, pk):
-        self.recipe_exists(pk)
+        self.recipe_exists()
         if validation:
             return Response(
                 {'error': 'Рецепт уже находится в избранном'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = RecipeSubscriptionSerializer(Recipe.objects.get(pk=pk))
+        serializer = RecipeSubscriptionSerializer(get_object_or_404(Recipe, pk=pk))
         model.objects.create(
-            user=request.user, recipe=Recipe.objects.get(pk=pk)
+            user=request.user, recipe=get_object_or_404(Recipe, pk=pk)
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete_method(self, request, model, validation, pk):
-        self.recipe_exists(pk)
+        self.recipe_exists()
         if not validation:
             return Response(
                 {'error': 'Данный рецепт не добавлен в избранное'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         model.objects.filter(
-            user=request.user, recipe=Recipe.objects.get(pk=pk)
+            user=request.user, recipe=get_object_or_404(Recipe, pk=pk)
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @decorators.action(detail=True, methods=['post', 'delete'])
     def favorite(self, request, pk):
         validation = (
-            Recipe.objects.get(pk=pk).favorite_users.user == request.user
+            get_object_or_404(Recipe, pk=pk).favorite_users.user == request.user
         )
         if request.method == 'POST':
             return self.post_method(request, Favorite, validation, pk)
@@ -83,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @decorators.action(detail=True, methods=['post', 'delete'])
     def shopping_cart(self, request, pk):
         validation = (
-            Recipe.objects.get(pk=pk).shopping_cart_users.user == request.user
+            get_object_or_404(Recipe, pk=pk).shopping_cart_users.user == request.user
         )
         if request.method == 'POST':
             return self.post_method(request, ShoppingCart, validation, pk)
