@@ -19,7 +19,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
             'password',
         )
         read_only_fields = ('id',)
-    
+
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return CustomUser.objects.create(validated_data)

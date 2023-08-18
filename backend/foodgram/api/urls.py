@@ -10,15 +10,15 @@ from api.views import (
 )
 
 router = routers.SimpleRouter()
-router.register('recipes', RecipeViewSet)
-router.register('tags', TagViewSet)
-router.register('ingredients', IngredientViewSet)
+router.register("recipes", RecipeViewSet)
+router.register("tags", TagViewSet)
+router.register("ingredients", IngredientViewSet)
 
 
 urlpatterns = [
-    path('recipes/download_shopping_cart/', shopping_cart),
-    path('users/', include(users.urls)),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-    path('', include(router.urls)),
+    path("recipes/download_shopping_cart/", shopping_cart),
+    path("users/", include(users.urls)),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
+    path("", include(router.urls)),
 ]
