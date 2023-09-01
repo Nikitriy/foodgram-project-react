@@ -62,11 +62,6 @@ python manage.py runserver
 
 https://useful-foodgram.bounceme.net
 
-### Данные админки (временно для ревьюера)
-
-login - admin
-password - admin
-
 ### Используемые технологии
 
 - Django
